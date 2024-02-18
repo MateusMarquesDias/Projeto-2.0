@@ -1,20 +1,15 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  web:
-  image: nginx
+  site2:
+    image: nginx
     deploy:
       replicas: 8
       placement:
         constraints: [node.role==worker]
     ports:
-      - "8000:8000"
-    networks:
-      - minha_rede
-    depends_on:
-      - redis
-      - mysql
-       visualizer:
+      - "8000:80"
+  visualizer:
     image: dockersamples/visualizer:stable
     ports:
       - "8888:8080"
@@ -23,26 +18,3 @@ services:
     deploy:
       placement:
         constraints: [ node.role == manager ]
-
-  redis:
-    image: redis:alpine
-    networks:
-      - minha_rede
-
-  mysql:
-    image: mysql
-    deploy:
-      replicas: 2
-    networks:
-      - minha_rede
-    environment:
-      MYSQL_ROOT_PASSWORD: "root_password"
-      MYSQL_DATABASE: "my_database"
-      MYSQL_USER: "my_user"
-      MYSQL_PASSWORD: "my_password"
-    volumes:
-      - ./mysql:/var/lib/mysql
-
-networks:
-  minha_rede:
-    driver: overlay

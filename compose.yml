@@ -1,50 +1,47 @@
 version: '3.7'
 
 services:
-    web:
-      image: 127.0.0.1:5000/stackdemo
-      deploy:
-        replicas: 5
-      build: .
-      ports:
-        - "8000:8000"
-      networks:
-        - my_network
-        
-    redis:
-      image: redis:alpine
-      networks:
-        - my_network
-      
-    mysql:
-      image: mysql
-      deploy:
-        replicas: 2
-      environment:
-        MYSQL_ROOT_PASSWORD: ""
-        MYSQL_DATABASE: "localhost"
-        MYSQL_PASSWORD: ""
-        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      volumes:
-        - ./mysql:/var/lib/mysql
-      networks:
-        - my_network
-      ipv4_address: 192.168.0.13
-
-    jenkins:
-      image: jenkins/jenkins:lts
-      ports:
-        - "8080:8080"
-        - "50000:50000"
-      volumes:
-        - jenkins_home:/var/jenkins_home
-      networks:
-        - my_network
+  web:
+    image: sua_imagem
+    deploy:
+      replicas: 5
+      endpoint_mode: vip
+      placement:
+        constraints:
+          - node.role == worker
+      labels:
+        - "traefik.http.services.web-app.loadbalancer.server.port=8000"
+      resources:
+        reservations:
+          cpus: '0.1'
+          memory: 50M
+    ports:
+      - "8000:8000"
+    networks:
+      - minha_rede
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.1'
+          memory: 50M
+    environment:
+      - SWARM_MODE=1
+    configs:
+      - source: my_config
+        target: /app/config.txt
+      - source: my_secret
+        target: /app/secret.txt
 
 networks:
-  my_network:
-    driver: bridge
+  minha_rede:
+    driver: overlay
     ipam:
       driver: default
       config:
         - subnet: 192.168.0.0/24
+
+configs:
+  my_config:
+    file: ./config.txt
+  my_secret:
+    file: ./secret.txt

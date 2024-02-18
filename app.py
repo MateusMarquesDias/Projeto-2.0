@@ -12,9 +12,10 @@ def get_ip():
         nome_host = socket.gethostname()
         endereco_ip = socket.gethostbyname(nome_host)
         mysql.connector.connect(
-          host="mysql",
-          user="root",
-          password=""
+         host="mysql",
+         user="my_user",
+         password="my_password",
+         database="my_database"
         )
     except socket.gaierror:
         logging.error("Falha ao recuperar o endereço IP: Nome do host não pôde ser resolvido")

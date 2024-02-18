@@ -1,51 +1,8 @@
+version: '3.8'
+
 services:
   web:
-    image: 127.0.0.1:5000/stackdemo
-    deploy:
-      replicas: 5
     build: .
-    networks:
-      - rede_swarm
     ports:
       - "8000:8000"
 
-  redis:
-    image: redis:alpine
-    networks:
-      - rede_swarm
-
-  mysql:
-    image: mysql
-    deploy:
-      replicas: 2
-    networks:
-      - rede_swarm
-    environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: "localhost"
-      MYSQL_PASSWORD: ""
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    volumes:
-      - ./mysql:/var/lib/mysql
-
-  jenkins:
-    image: jenkins/jenkins:lts
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-    networks:
-      - jenkins_net
-      - rede_swarm
-
-networks:
-  rede_swarm:
-    driver: overlay
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.18.0.0/16
-
-  jenkins_net:
-    driver: overlay

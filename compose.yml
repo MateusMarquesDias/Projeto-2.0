@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     image: 127.0.0.1:5000/stackdemo
@@ -10,15 +8,11 @@ services:
       - rede_swarm
     ports:
       - "8000:8000"
-    networks:
-      - rede_swarm
-    ipv4_address: 172.18.0.22
 
   redis:
     image: redis:alpine
     networks:
       - rede_swarm
-    ipv4_address: 172.18.0.23
 
   mysql:
     image: mysql
@@ -28,14 +22,11 @@ services:
       - rede_swarm
     environment:
       MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: "localhost"
+      MYSQL_DATABASE: "seu_banco_de_dados"
       MYSQL_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - ./mysql:/var/lib/mysql
-    networks:
-      - rede_swarm
-    ipv4_address: 172.18.0.24
 
   jenkins:
     image: jenkins/jenkins:lts
@@ -55,8 +46,6 @@ networks:
       driver: default
       config:
         - subnet: 172.18.0.0/16
+
   jenkins_net:
     driver: overlay
-
-volumes:
-  jenkins_home:

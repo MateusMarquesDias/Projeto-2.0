@@ -1,8 +1,48 @@
-version: '3.8'
+version: '3.7'
 
 services:
   web:
-    build: .
+    image: 127.0.0.1:5000/stackdemo
+    deploy:
+      replicas: 5
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - rede_swarm
     ports:
       - "8000:8000"
+    rede_swarm:
+      ipv4_address: 172.18.0.22
 
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 1
+    networks:
+      - rede_swarm
+    rede_swarm:
+      ipv4_address: 172.18.0.23
+
+  mysql:
+    image: mysql
+    deploy:
+      replicas: 1
+    networks:
+      - rede_swarm
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: "my_database"
+      MYSQL_PASSWORD: "my_password"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    rede_swarm:
+      ipv4_address: 172.18.0.24
+
+networks:
+  rede_swarm:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16

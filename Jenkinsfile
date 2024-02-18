@@ -10,13 +10,28 @@ pipeline {
         
         stage('Setup') {
             steps {
-                sh 'pip install -r requirements.txt' // Instala as dependências
+                script {
+                    sh 'pip install -r requirements.txt'
+                }
             }
         }
         
         stage('Test') {
             steps {
-                sh 'python -m pytest tests/test_app.py' // Executa os testes
+                script {
+                    sh 'python -m pytest tests/test_app.py'
+                }
+            }
+        }
+        
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    docker.build("my-docker-image:latest")
+                    docker.withRegistry('https://registry.example.com', 'docker-registry-credentials') {
+                        docker.image("my-docker-image:latest").push()
+                    }
+                }
             }
         }
     }

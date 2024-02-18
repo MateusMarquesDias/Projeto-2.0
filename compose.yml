@@ -22,7 +22,7 @@ services:
       - rede_swarm
     environment:
       MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: "seu_banco_de_dados"
+      MYSQL_DATABASE: "localhost"
       MYSQL_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
